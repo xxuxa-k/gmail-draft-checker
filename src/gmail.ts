@@ -1,29 +1,17 @@
-interface Government {
-  name: string;
-  prefecture: string;
-  isLocal: boolean;
-}
+import { 
+  OnComposeEventObject,
+  OnChangeActionsParameters,
+} from './interface'
 
-interface OnComposeEventObject {
-  draftMetadata: DraftMetadata
-}
+// const draftCheckCardBuilder = (message: GoogleAppsScript.Gmail.GmailMessage) => {
+//   return CardService.newCardBuilder()
+// }
 
-interface DraftMetadata {
-  subject: string;
-  toRecipients: string[];
-  ccRecipients: string[];
-  bccRecipients: string[];
-}
-
-interface OnChangeActionsParameters {
-  draftId?: string;
-  messageId?: string;
-}
 
 function onGmailCompose(e: OnComposeEventObject) {
   // GmailApp.getDraftMessages() => GmailApp.GmailMessage[]
   // logger(`onGmailCompose\n${JSON.stringify(e)}`)
-  const draftCandidates = GmailApp.getDraftMessages().filter(message => {
+  const draftCandidates: GoogleAppsScript.Gmail.GmailMessage[] = GmailApp.getDraftMessages().filter(message => {
     return e.draftMetadata.subject === message.getSubject()
     && e.draftMetadata.toRecipients.every(r => message.getTo().split(",").some(to => to.includes(r)))
     && e.draftMetadata.ccRecipients.every(r => message.getCc().split(",").some(cc => cc.includes(r)))
@@ -273,6 +261,7 @@ function handleSendButtonClick(e: { parameters: OnChangeActionsParameters }) {
     return
   }
   // draft[0].send()
+  // もとのカードに戻れないようにしたい
   return CardService.newCardBuilder()
   .addSection(
     CardService.newCardSection()
