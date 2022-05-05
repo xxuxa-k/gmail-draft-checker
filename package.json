@@ -1,0 +1,12 @@
+{
+  "name": "gmail-draft-checker",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://xxuxa-k:2ab9e1d440ceff65fe74cf0ff876f0d013f2b110@github.com/xxuxa-k/gmail-draft-checker.git",
+  "author": "xxuxa-k <tk0x2bc@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/google-apps-script": "^1.0.47",
+    "typescript": "^4.6.4"
+  }
+}
