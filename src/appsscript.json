@@ -43,7 +43,7 @@
         "selectActions": [
           {
             "runFunction": "onGmailCompose",
-            "text": "composeTrigger is here"
+            "text": "Gmail Draft Checker"
           }
         ]
       }
