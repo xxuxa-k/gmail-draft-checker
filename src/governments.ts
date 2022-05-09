@@ -1,4 +1,4 @@
-const goverments = [
+const governments: string[] = [
   "仙北市",
   "長柄町",
   "岬町",

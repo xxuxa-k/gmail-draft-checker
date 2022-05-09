@@ -1,21 +1,13 @@
-import { 
-  OnComposeEventObject,
-  OnChangeActionsParameters,
-} from './interface'
+// import { governments } from "./governments"
+import { logger } from './slack'
 
-// const draftCheckCardBuilder = (message: GoogleAppsScript.Gmail.GmailMessage) => {
-//   return CardService.newCardBuilder()
-// }
-
-
-function onGmailCompose(e: OnComposeEventObject) {
-  // GmailApp.getDraftMessages() => GmailApp.GmailMessage[]
-  // logger(`onGmailCompose\n${JSON.stringify(e)}`)
+function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
   const draftCandidates: GoogleAppsScript.Gmail.GmailMessage[] = GmailApp.getDraftMessages().filter(message => {
-    return e.draftMetadata.subject === message.getSubject()
-    && e.draftMetadata.toRecipients.every(r => message.getTo().split(",").some(to => to.includes(r)))
-    && e.draftMetadata.ccRecipients.every(r => message.getCc().split(",").some(cc => cc.includes(r)))
-    && e.draftMetadata.bccRecipients.every(r => message.getBcc().split(",").some(bcc => bcc.includes(r)))
+    return e.draftMetadata
+    && e.draftMetadata.subject === message.getSubject()
+    && e.draftMetadata.toRecipients.every(r => message.getTo().split(",").some((to: string) => to.includes(r)))
+    && e.draftMetadata.ccRecipients.every(r => message.getCc().split(",").some((cc: string) => cc.includes(r)))
+    && e.draftMetadata.bccRecipients.every(r => message.getBcc().split(",").some((bcc: string) => bcc.includes(r)))
   })
   const draft = draftCandidates.length === 1 ? draftCandidates[0] : null
   if (!draft) {
@@ -30,10 +22,30 @@ function onGmailCompose(e: OnComposeEventObject) {
     .build()
   }
 
+  const fromCheckSection = CardService.newCardSection()
+  .addWidget(
+    CardService.newDecoratedText()
+    .setText('From')
+    .setWrapText(true)
+    .setSwitchControl(
+      CardService.newSwitch()
+      .setFieldName('from_check')
+      .setValue('ok')
+      .setOnChangeAction(
+        CardService.newAction()
+        .setFunctionName('handleFormInput')
+      )
+    )
+  )
+  .addWidget(
+    CardService.newTextParagraph()
+    .setText(draft.getFrom())
+  )
+
   const subjectCheckSection = CardService.newCardSection()
   .addWidget(
     CardService.newDecoratedText()
-    .setText('件名は問題ありませんか？')
+    .setText('件名')
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
@@ -53,7 +65,7 @@ function onGmailCompose(e: OnComposeEventObject) {
   const toCheckSection = CardService.newCardSection()
   .addWidget(
     CardService.newDecoratedText()
-    .setText('送り先(to)は問題ありませんか？')
+    .setText('To')
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
@@ -74,7 +86,7 @@ function onGmailCompose(e: OnComposeEventObject) {
   const ccCheckSection = CardService.newCardSection()
   .addWidget(
     CardService.newDecoratedText()
-    .setText('送り先(cc)は問題ありませんか？')
+    .setText('Cc')
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
@@ -96,7 +108,7 @@ function onGmailCompose(e: OnComposeEventObject) {
   const bccCheckSection = CardService.newCardSection()
   .addWidget(
     CardService.newDecoratedText()
-    .setText('送り先(bcc)は問題ありませんか？')
+    .setText('Bcc')
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
@@ -117,7 +129,7 @@ function onGmailCompose(e: OnComposeEventObject) {
   const urlCheckSection = CardService.newCardSection()
   .addWidget(
     CardService.newDecoratedText()
-    .setText('URLとして記載された内容は送信先に適したものになっていますか？')
+    .setText('URL')
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
@@ -130,7 +142,7 @@ function onGmailCompose(e: OnComposeEventObject) {
     )
   )
   const urls = draft.getPlainBody().match(/http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?/g) || []
-  urls.forEach(url => {
+  urls.forEach((url: string) => {
     urlCheckSection.addWidget(
       CardService.newDecoratedText()
       .setText(url)
@@ -147,7 +159,7 @@ function onGmailCompose(e: OnComposeEventObject) {
   const governmentsCheckSection = CardService.newCardSection()
   .addWidget(
     CardService.newDecoratedText()
-    .setText('本文に記載された自治体名は問題ありませんか？')
+    .setText('自治体名')
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
@@ -161,10 +173,9 @@ function onGmailCompose(e: OnComposeEventObject) {
   )
   .addWidget(
     CardService.newTextParagraph()
-    // .setText(getGovernmentsFromBody(draft.getPlainBody()).join('\n'))
-    .setText(goverments.map(go => {
-      if (draft.getPlainBody().indexOf(go) !== -1) {
-        return go
+    .setText(governments.map((g: string) => {
+      if (draft.getPlainBody().indexOf(g) !== -1) {
+        return g
       }
     }).filter(v => v).join('\n'))
   )
@@ -172,7 +183,7 @@ function onGmailCompose(e: OnComposeEventObject) {
   const attachementsCheckSection = CardService.newCardSection()
   .addWidget(
     CardService.newDecoratedText()
-    .setText('添付ファイルは問題ありませんか？')
+    .setText('添付ファイル')
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
@@ -222,7 +233,7 @@ function onGmailCompose(e: OnComposeEventObject) {
   )
   .addWidget(
     CardService.newTextParagraph()
-    .setText(`(本文先頭10行):\n${summary}`)
+    .setText(summary)
   )
 
   const sendButtonSection = CardService.newCardSection()
@@ -239,6 +250,7 @@ function onGmailCompose(e: OnComposeEventObject) {
   )
 
   return CardService.newCardBuilder()
+  .addSection(fromCheckSection)
   .addSection(subjectCheckSection)
   .addSection(toCheckSection)
   .addSection(ccCheckSection)
@@ -251,11 +263,12 @@ function onGmailCompose(e: OnComposeEventObject) {
   .build()
 }
 
-function handleFormInput(e) {
+function handleFormInput(e: { parameters: GoogleAppsScript.Addons.OnChangeActionsParameters }) {
+  logger(JSON.stringify(e))
   return
 }
 
-function handleSendButtonClick(e: { parameters: OnChangeActionsParameters }) {
+function handleSendButtonClick(e: { parameters: GoogleAppsScript.Addons.OnChangeActionsParameters }) {
   const draft = GmailApp.getDrafts().filter(draft => draft.getMessageId() === e.parameters.messageId)
   if (draft.length !== 1) {
     return
@@ -273,13 +286,14 @@ function handleSendButtonClick(e: { parameters: OnChangeActionsParameters }) {
   .build()
 }
 
-function saveAttachments(e: { parameters: OnChangeActionsParameters }) {
+function saveAttachments(e: { parameters: GoogleAppsScript.Addons.OnChangeActionsParameters }) {
   const messageId = e.parameters?.messageId || ''
   const message = GmailApp.getMessageById(messageId)
   if (!message) {
     return
   }
-  const folder = DriveApp.createFolder(`GmailDraftCheckerAttachments_${message.getSubject()}`)
+  const now = dayjs.dayjs().format("YYYY-MM-DD HH:mm:ss")
+  const folder = DriveApp.createFolder(`GmailDraftCheckerAttachments_${message.getSubject()}_${now}`)
   message.getAttachments().forEach(attachment => {
     if (attachment.isGoogleType()) {
       return
@@ -289,16 +303,3 @@ function saveAttachments(e: { parameters: OnChangeActionsParameters }) {
   })
 }
 
-
-function logger(text: string) {
-  UrlFetchApp.fetch('https://hooks.slack.com/services/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', {
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    muteHttpExceptions: true,
-    payload: JSON.stringify({
-      'text': text
-    })
-  })
-}
