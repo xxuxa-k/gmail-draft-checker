@@ -3,13 +3,13 @@ const GasPlugin = require('gas-webpack-plugin')
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
-  entry: path.resolve(__dirname, 'src', 'gmail.ts'),
+  entry: path.resolve(__dirname, 'src', 'index.ts'),
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js'
   },
   resolve: {
-    extensions: ['*.ts']
+    extensions: ['.ts']
   },
   module: {
     rules: [

@@ -18,3 +18,16 @@ declare module GoogleAppsScript {
     }
   }
 }
+
+declare const dayjs: {
+  dayjs(arg?: any): any;
+}
+
+declare const global: {
+  onGmailCompose(arg?: any): GoogleAppsScript.Card_Service.Card;
+  handleFormInput(arg?: any): void;
+  handleSendButtonClick(arg?: any):GoogleAppsScript.Card_Service.Card | undefined;
+  saveAttachments(arg?: any?): void;
+  logger(text: string): void;
+  governments: string[];
+}

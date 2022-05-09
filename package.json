@@ -14,5 +14,8 @@
   },
   "devDependencies": {
     "webpack-cli": "^4.9.2"
+  },
+  "scripts": {
+    "push": "webpack --mode production && clasp push --force"
   }
 }

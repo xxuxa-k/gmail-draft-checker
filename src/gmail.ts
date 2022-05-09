@@ -1,7 +1,7 @@
-// import { governments } from "./governments"
+import { governments } from "./governments"
 import { logger } from './slack'
 
-function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
+export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
   const draftCandidates: GoogleAppsScript.Gmail.GmailMessage[] = GmailApp.getDraftMessages().filter(message => {
     return e.draftMetadata
     && e.draftMetadata.subject === message.getSubject()
@@ -263,12 +263,11 @@ function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
   .build()
 }
 
-function handleFormInput(e: { parameters: GoogleAppsScript.Addons.OnChangeActionsParameters }) {
+export function handleFormInput(e: { parameters: GoogleAppsScript.Addons.OnChangeActionsParameters }) {
   logger(JSON.stringify(e))
-  return
 }
 
-function handleSendButtonClick(e: { parameters: GoogleAppsScript.Addons.OnChangeActionsParameters }) {
+export function handleSendButtonClick(e: { parameters: GoogleAppsScript.Addons.OnChangeActionsParameters }) {
   const draft = GmailApp.getDrafts().filter(draft => draft.getMessageId() === e.parameters.messageId)
   if (draft.length !== 1) {
     return
@@ -286,7 +285,7 @@ function handleSendButtonClick(e: { parameters: GoogleAppsScript.Addons.OnChange
   .build()
 }
 
-function saveAttachments(e: { parameters: GoogleAppsScript.Addons.OnChangeActionsParameters }) {
+export function saveAttachments(e: { parameters: GoogleAppsScript.Addons.OnChangeActionsParameters }) {
   const messageId = e.parameters?.messageId || ''
   const message = GmailApp.getMessageById(messageId)
   if (!message) {
