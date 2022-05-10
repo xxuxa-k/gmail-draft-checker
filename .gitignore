@@ -4,3 +4,6 @@
 .envrc
 
 /node_modules/
+
+/dist/*
+!/dist/appsscript.json
