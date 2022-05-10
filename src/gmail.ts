@@ -142,7 +142,7 @@ export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
     )
   )
   const urls = draft.getPlainBody().match(/http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?/g) || []
-  urls.forEach((url: string) => {
+  Array.from(new Set(urls)).forEach((url: string) => {
     urlCheckSection.addWidget(
       CardService.newDecoratedText()
       .setText(url)
@@ -173,11 +173,11 @@ export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
   )
   .addWidget(
     CardService.newTextParagraph()
-    .setText(governments.map((g: string) => {
+    .setText(governments.filter((g: string) => {
       if (draft.getPlainBody().indexOf(g) !== -1) {
         return g
       }
-    }).filter(v => v).join('\n'))
+    }).join('\n'))
   )
 
   const attachementsCheckSection = CardService.newCardSection()
@@ -255,9 +255,9 @@ export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
   .addSection(toCheckSection)
   .addSection(ccCheckSection)
   .addSection(bccCheckSection)
+  .addSection(attachementsCheckSection)
   .addSection(urlCheckSection)
   .addSection(governmentsCheckSection)
-  .addSection(attachementsCheckSection)
   .addSection(summaryCheckSection)
   .addSection(sendButtonSection)
   .build()
