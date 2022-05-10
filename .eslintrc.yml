@@ -1,0 +1,10 @@
+root: true
+plugins:
+  - '@typescript-eslint'
+  - googleappsscript
+extends:
+  - eslint:recommended
+  - plugin:@typescript-eslint/recommended
+env:
+  es6: true
+  googleappsscript/googleappsscript: true

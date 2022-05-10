@@ -20,6 +20,7 @@
     "webpack-cli": "^4.9.2"
   },
   "scripts": {
-    "push": "webpack --mode production && clasp push --force"
+    "push": "webpack --mode production && clasp push --force",
+    "lint": "eslint src"
   }
 }
