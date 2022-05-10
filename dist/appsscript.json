@@ -24,7 +24,7 @@
   "addOns": {
     "common": {
       "name": "Gmail Draft Checker",
-      "logoUrl": "https://placehold.jp/24x24.png",
+      "logoUrl": "https://raw.githubusercontent.com/xxuxa-k/gmail-draft-checker/images/cancerscan/cancerscan_logo_24x24.png",
       "layoutProperties": {
         "primaryColor": "#ff7463",
         "secondaryColor": "#5575ff"
