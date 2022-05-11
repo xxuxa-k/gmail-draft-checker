@@ -4,7 +4,9 @@
   "repository": "https://github.com/xxuxa-k/gmail-draft-checker.git",
   "author": "xxuxa-k",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "copy-webpack-plugin": "^10.2.4"
+  },
   "devDependencies": {
     "@google/clasp": "^2.4.1",
     "@types/google-apps-script": "^1.0.47",
