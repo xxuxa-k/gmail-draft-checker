@@ -1,5 +1,4 @@
 import { governments } from "./governments"
-import { logger } from './slack'
 
 export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
   const draftCandidates: GoogleAppsScript.Gmail.GmailMessage[] = GmailApp.getDraftMessages().filter(message => {
@@ -264,7 +263,7 @@ export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
 }
 
 export function handleFormInput(e: { parameters: GoogleAppsScript.Addons.OnChangeActionsParameters }) {
-  logger(JSON.stringify(e))
+  console.log(e)
 }
 
 export function handleSendButtonClick(e: { parameters: GoogleAppsScript.Addons.OnChangeActionsParameters }) {
@@ -272,14 +271,13 @@ export function handleSendButtonClick(e: { parameters: GoogleAppsScript.Addons.O
   if (draft.length !== 1) {
     return
   }
-  // draft[0].send()
-  // もとのカードに戻れないようにしたい
+  const message = draft[0].send()
   return CardService.newCardBuilder()
   .addSection(
     CardService.newCardSection()
     .addWidget(
       CardService.newTextParagraph()
-      .setText('メールを送信しました。画面を閉じてください。')
+      .setText(`件名: ${message.getSubject()}\nを送信しました。画面を閉じてください。`)
     )
   )
   .build()

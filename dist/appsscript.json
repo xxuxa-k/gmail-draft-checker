@@ -14,7 +14,6 @@
   "oauthScopes": [
     "https://mail.google.com/",
     "https://www.googleapis.com/auth/drive",
-    "https://www.googleapis.com/auth/script.external_request",
     "https://www.googleapis.com/auth/gmail.compose",
     "https://www.googleapis.com/auth/gmail.addons.execute",
     "https://www.googleapis.com/auth/gmail.addons.current.action.compose",
@@ -24,7 +23,7 @@
   "addOns": {
     "common": {
       "name": "Gmail Draft Checker",
-      "logoUrl": "https://raw.githubusercontent.com/xxuxa-k/gmail-draft-checker/images/cancerscan/cancerscan_logo_24x24.png",
+      "logoUrl": "http://placehold.jp/20/3d4070/ffffff/24x24.png?text=%E9%98%B2",
       "layoutProperties": {
         "primaryColor": "#ff7463",
         "secondaryColor": "#5575ff"
