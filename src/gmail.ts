@@ -262,35 +262,49 @@ export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
   .build()
 }
 
-export function handleFormInput(e: { parameters: GoogleAppsScript.Addons.OnChangeActionsParameters }) {
+export function handleFormInput(e: {
+  parameters: {
+    messageId: string;
+  },
+  formInputs: GoogleAppsScript.Addons.OnChangeActionsParameters
+}) {
   console.log(e)
 }
 
-export function handleSendButtonClick(e: { parameters: GoogleAppsScript.Addons.OnChangeActionsParameters }) {
+export function handleSendButtonClick(e: {
+  parameters: {
+    messageId: string;
+  },
+  formInputs: GoogleAppsScript.Addons.OnChangeActionsParameters
+}) {
   const draft = GmailApp.getDrafts().filter(draft => draft.getMessageId() === e.parameters?.messageId)
   if (draft.length !== 1) {
-    return
+    return CardService.newActionResponseBuilder().setNotification(
+      CardService.newNotification().setText("エラーが発生しました")
+    ).build()
   }
-  const condition = e.parameters.fromCheck
-  && e.parameters.fromCheck.includes("ok")
-  && e.parameters.subjectCheck
-  && e.parameters.subjectCheck.includes("ok")
-  && e.parameters.toCheck
-  && e.parameters.toCheck.includes("ok")
-  && e.parameters.ccCheck
-  && e.parameters.ccCheck.includes("ok")
-  && e.parameters.bccCheck
-  && e.parameters.bccCheck.includes("ok")
-  && e.parameters.attachmentsCheck
-  && e.parameters.attachmentsCheck.includes("ok")
-  && e.parameters.urlCheck
-  && e.parameters.urlCheck.includes("ok")
-  && e.parameters.governmentsCheck
-  && e.parameters.governmentsCheck.includes("ok")
-  && e.parameters.summaryCheck
-  && e.parameters.summaryCheck.includes("ok")
+  const condition = e.formInputs.fromCheck
+  && e.formInputs.fromCheck.includes("ok")
+  && e.formInputs.subjectCheck
+  && e.formInputs.subjectCheck.includes("ok")
+  && e.formInputs.toCheck
+  && e.formInputs.toCheck.includes("ok")
+  && e.formInputs.ccCheck
+  && e.formInputs.ccCheck.includes("ok")
+  && e.formInputs.bccCheck
+  && e.formInputs.bccCheck.includes("ok")
+  && e.formInputs.attachmentsCheck
+  && e.formInputs.attachmentsCheck.includes("ok")
+  && e.formInputs.urlCheck
+  && e.formInputs.urlCheck.includes("ok")
+  && e.formInputs.governmentsCheck
+  && e.formInputs.governmentsCheck.includes("ok")
+  && e.formInputs.summaryCheck
+  && e.formInputs.summaryCheck.includes("ok")
   if (!condition) {
-    return
+    return CardService.newActionResponseBuilder().setNotification(
+      CardService.newNotification().setText("チェックが不足しています")
+    ).build()
   }
   const message = draft[0].send()
   return CardService.newCardBuilder()
@@ -305,19 +319,37 @@ export function handleSendButtonClick(e: { parameters: GoogleAppsScript.Addons.O
 }
 
 export function saveAttachments(e: { parameters: GoogleAppsScript.Addons.OnChangeActionsParameters }) {
-  const messageId = e.parameters?.messageId || ''
+  const messageId = e.parameters?.messageId
+  if (!messageId) {
+    return CardService.newActionResponseBuilder().setNotification(
+      CardService.newNotification().setText("ファイルの保存に失敗しました")
+    ).build()
+  }
   const message = GmailApp.getMessageById(messageId)
   if (!message) {
-    return
+    return CardService.newActionResponseBuilder().setNotification(
+      CardService.newNotification().setText("ファイルの保存に失敗しました")
+    ).build()
   }
-  const now = dayjs.dayjs().format("YYYY-MM-DD HH:mm:ss")
-  const folder = DriveApp.createFolder(`GmailDraftCheckerAttachments_${message.getSubject()}_${now}`)
+  const folderName = `GmailDraftCheckerAttachments_${message.getSubject()}_${dayjs.dayjs().format("YYYY-MM-DD HH:mm:ss")}`
+  const folder = Drive.Files?.insert({
+    title: folderName,
+    mimeType: 'application/vnd.google-apps.folder'
+  })
+
   message.getAttachments().forEach(attachment => {
     if (attachment.isGoogleType()) {
       return
     }
-    const blob = attachment.copyBlob()
-    folder.createFile(blob)
+    const parentReference = Drive.newParentReference()
+    parentReference.id = folder?.id
+    Drive.Files?.insert({
+      title: attachment.getName(),
+      parents: [parentReference]
+    }, attachment.copyBlob())
   })
+  return CardService.newActionResponseBuilder().setNotification(
+    CardService.newNotification().setText(`${folderName}に添付ファイルを保存しました`)
+  ).build()
 }
 
