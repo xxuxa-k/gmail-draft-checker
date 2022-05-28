@@ -15,6 +15,11 @@ declare namespace GoogleAppsScript {
     interface OnChangeActionsParameters {
       draftId?: string;
       messageId?: string;
+      fromCheck?: string[];
+      toCheck?: string[];
+      ccCheck?: string[];
+      bccCheck?: string[];
+      subjectCheck?: string[];
     }
   }
 }
