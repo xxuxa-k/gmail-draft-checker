@@ -28,7 +28,7 @@ export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
-      .setFieldName('from_check')
+      .setFieldName('fromCheck')
       .setValue('ok')
       .setOnChangeAction(
         CardService.newAction()
@@ -48,7 +48,7 @@ export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
-      .setFieldName('subject_check')
+      .setFieldName('subjectCheck')
       .setValue('ok')
       .setOnChangeAction(
         CardService.newAction()
@@ -68,7 +68,7 @@ export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
-      .setFieldName('to_check')
+      .setFieldName('toCheck')
       .setValue('ok')
       .setOnChangeAction(
         CardService.newAction()
@@ -89,7 +89,7 @@ export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
-      .setFieldName('cc_check')
+      .setFieldName('ccCheck')
       .setValue('ok')
       .setSelected(!cc)
       .setOnChangeAction(
@@ -111,7 +111,7 @@ export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
-      .setFieldName('bcc_check')
+      .setFieldName('bccCheck')
       .setValue('ok')
       .setSelected(!bcc)
       .setOnChangeAction(
@@ -132,7 +132,7 @@ export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
-      .setFieldName('url_check')
+      .setFieldName('urlCheck')
       .setValue('ok')
       .setOnChangeAction(
         CardService.newAction()
@@ -162,7 +162,7 @@ export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
-      .setFieldName('governments_check')
+      .setFieldName('governmentsCheck')
       .setValue('ok')
       .setOnChangeAction(
         CardService.newAction()
@@ -186,7 +186,7 @@ export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
-      .setFieldName('attachment_check')
+      .setFieldName('attachmentsCheck')
       .setValue('ok')
       .setSelected(draft.getAttachments().length === 0)
       .setOnChangeAction(
@@ -222,7 +222,7 @@ export function onGmailCompose(e: GoogleAppsScript.Addons.GmailEventObject) {
     .setWrapText(true)
     .setSwitchControl(
       CardService.newSwitch()
-      .setFieldName('summary_check')
+      .setFieldName('summaryCheck')
       .setValue('ok')
       .setOnChangeAction(
         CardService.newAction()
@@ -267,8 +267,29 @@ export function handleFormInput(e: { parameters: GoogleAppsScript.Addons.OnChang
 }
 
 export function handleSendButtonClick(e: { parameters: GoogleAppsScript.Addons.OnChangeActionsParameters }) {
-  const draft = GmailApp.getDrafts().filter(draft => draft.getMessageId() === e.parameters.messageId)
+  const draft = GmailApp.getDrafts().filter(draft => draft.getMessageId() === e.parameters?.messageId)
   if (draft.length !== 1) {
+    return
+  }
+  const condition = e.parameters.fromCheck
+  && e.parameters.fromCheck.includes("ok")
+  && e.parameters.subjectCheck
+  && e.parameters.subjectCheck.includes("ok")
+  && e.parameters.toCheck
+  && e.parameters.toCheck.includes("ok")
+  && e.parameters.ccCheck
+  && e.parameters.ccCheck.includes("ok")
+  && e.parameters.bccCheck
+  && e.parameters.bccCheck.includes("ok")
+  && e.parameters.attachmentsCheck
+  && e.parameters.attachmentsCheck.includes("ok")
+  && e.parameters.urlCheck
+  && e.parameters.urlCheck.includes("ok")
+  && e.parameters.governmentsCheck
+  && e.parameters.governmentsCheck.includes("ok")
+  && e.parameters.summaryCheck
+  && e.parameters.summaryCheck.includes("ok")
+  if (!condition) {
     return
   }
   const message = draft[0].send()

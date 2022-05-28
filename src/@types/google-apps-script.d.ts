@@ -16,10 +16,14 @@ declare namespace GoogleAppsScript {
       draftId?: string;
       messageId?: string;
       fromCheck?: string[];
+      subjectCheck?: string[];
       toCheck?: string[];
       ccCheck?: string[];
       bccCheck?: string[];
-      subjectCheck?: string[];
+      attachmentsCheck?: string[];
+      urlCheck?: string[];
+      governmentsCheck?: string[];
+      summaryCheck?: string[];
     }
   }
 }
